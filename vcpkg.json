@@ -1,0 +1,23 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+    "name": "ostimlovense",
+    "version-string": "1.0.0",
+    "port-version": 0,
+    "description": "",
+    "homepage": "",
+    "features": {
+        "plugin": {
+            "description": "Build the SKSE plugin.",
+            "dependencies": [
+                "articuno",
+                "commonlibsse-ng",
+                "libcurl-simple-https",
+                "nlohmann-json",
+                "tomlplusplus"
+            ]
+        }
+    },
+    "default-features": [
+        "plugin"
+    ]
+}
