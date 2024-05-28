@@ -21,10 +21,17 @@ configure_file(
         @ONLY)
 
 set(sources
+        src/GameLogic/GameSerializationManager.cpp
+        src/Settings/BaseSetting.cpp
+        src/Settings/LovenseSettingGroup.cpp
+        src/Settings/SettingTable.cpp
+        src/Settings/TextSetting.cpp
         src/Toys/LovenseToy.cpp
         src/Toys/ToyManager.cpp
         src/Url/Request.cpp
+        src/Util/SerializationUtil.cpp
         src/Util/StringUtil.cpp
+        src/Core.cpp
         src/Main.cpp
 
         ${CMAKE_CURRENT_BINARY_DIR}/version.rc)

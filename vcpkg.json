@@ -12,8 +12,7 @@
                 "articuno",
                 "commonlibsse-ng",
                 "libcurl-simple-https",
-                "nlohmann-json",
-                "tomlplusplus"
+                "nlohmann-json"
             ]
         }
     },

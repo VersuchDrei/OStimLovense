@@ -3,8 +3,8 @@
 #include <curl/curl.h>
 
 #include "Lovense/ErrorCode.h"
+#include "Settings/SettingTable.h"
 #include "Util/StringUtil.h"
-#include "Settings.h"
 
 namespace Request {
     size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
@@ -13,6 +13,8 @@ namespace Request {
     }
 
     RequestResult send(std::string& toy, Lovense::CommandType &command, std::unordered_map<std::string, std::string> params) {
+        Settings::SettingTable *settings = Settings::SettingTable::getSingleton();
+
         CURL* curl;
         CURLcode res;
         std::string readBuffer;
@@ -23,7 +25,7 @@ namespace Request {
             /* First set the URL that is about to receive our POST. This URL can
                just as well be a https:// URL if that is what should receive the
                data. */
-            std::string url = "https://" + Settings::domain.get() + ":" + std::to_string(Settings::port.get()) + "/command";
+            std::string url = "https://" + *settings->getDomain() + ":" + *settings->getPort() + "/command";
             logger::info("url: {}", url);
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
@@ -37,7 +39,11 @@ namespace Request {
             json post = json::object();
             post["command"] = command.command;
             for (auto &[key, value] : params) {
-                post[key] = value;
+                if (StringUtil::isNumber(value)) {
+                    post[key] = std::stoi(value);
+                } else {
+                    post[key] = value;
+                }
             }
             if (!toy.empty()) {
                 post["toy"] = toy;
@@ -94,6 +100,8 @@ namespace Request {
             logger::error("url  request '{}' returned error code {}: {}", command.command, (int)code, Lovense::ErrorCodeAPI::getMessage(code));
             return {RequestResultType::LOVENSE_ERROR, result};
         }
+
+        logger::info("url response: {}", result.dump());
 
         return {RequestResultType::SUCCESS, result};
     }

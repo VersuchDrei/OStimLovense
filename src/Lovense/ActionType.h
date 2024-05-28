@@ -7,7 +7,7 @@ namespace Lovense {
         uint8_t max;
 
         inline std::string parseMagnitude(float magnitude) {
-            return std::to_string(static_cast<int>(std::round(magnitude * max)));
+            return magnitude == 0.0f ? "0" : std::to_string(std::max(1, static_cast<int>(std::round(magnitude * max))));
         }
     };
 

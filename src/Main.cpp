@@ -2,9 +2,10 @@
 
 #include <curl/curl.h>
 
+#include "GameLogic/GameSerializationManager.h"
 #include "OStim/InterfaceExchangeMessage.h"
+#include "Settings/LovenseSettingGroup.h"
 #include "Toys/ToyManager.h"
-#include "Settings.h"
 
 #include "Url/Request.h"
 
@@ -48,6 +49,7 @@ namespace {
                     return;
                 }
                 Toys::ToyManager::getSingleton()->setInterfaceMap(msg.interfaceMap);
+                Settings::LovenseSettingGroup::getSingleton()->setUp(msg.interfaceMap);
             } break;
         }
     }
@@ -67,11 +69,14 @@ SKSEPluginLoad(const LoadInterface* skse) {
         return false;
     }
 
-    Settings::load();
+    const auto serial = SKSE::GetSerializationInterface();
+    serial->SetUniqueID(_byteswap_ulong('OLVN'));
+    serial->SetSaveCallback(GameLogic::Save);
+    serial->SetLoadCallback(GameLogic::Load);
+    serial->SetRevertCallback(GameLogic::Revert);
 
     /* In windows, this will init the winsock stuff */
     curl_global_init(CURL_GLOBAL_ALL);
-    // TODO when are we calling clean up?
 
     log::info("{} has finished loading.", plugin->GetName());
     return true;

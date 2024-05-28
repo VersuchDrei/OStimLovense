@@ -16,7 +16,7 @@ namespace Toys {
         virtual void turnOn();
         virtual void turnOff();
 
-        virtual void update(float baseline, float peak, uint16_t peakInterval);
+        virtual void update(float baseline, float peak, int16_t peakInterval);
         virtual void peak(float magnitude, float duration);
         virtual void stop();
 
