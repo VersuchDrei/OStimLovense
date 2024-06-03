@@ -102,6 +102,19 @@ namespace Settings {
         return false;
     }
 
+
+    uint32_t BaseSetting::getDefaultKey() {
+        return 0;
+    }
+
+    uint32_t BaseSetting::getCurrentKey() {
+        return 0;
+    }
+
+    bool BaseSetting::setKey(uint32_t key) {
+        return false;
+    }
+
     
     bool BaseSetting::click() {
         return false;

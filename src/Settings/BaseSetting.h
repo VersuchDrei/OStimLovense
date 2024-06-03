@@ -42,6 +42,11 @@ namespace Settings {
         virtual const char* getCurrentText() override;
         virtual bool setText(const char* text) override;
 
+        // keymap option
+        virtual uint32_t getDefaultKey() override;
+        virtual uint32_t getCurrentKey() override;
+        virtual bool setKey(uint32_t key) override;
+
         // button options
         virtual bool click() override;
 
