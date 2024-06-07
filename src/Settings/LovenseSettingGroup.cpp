@@ -3,8 +3,6 @@
 #include "SettingTable.h"
 #include "TextSetting.h"
 
-#include "OStim/Settings/SettingInterface.h"
-
 namespace Settings {
     LovenseSettingGroup::LovenseSettingGroup() {
         settings.push_back(new TextSetting({"IP", "The local IP of your Lovense Remote app."}, SettingTable::defaultDomain, []() { return SettingTable::getSingleton()->getDomain(); }, [](std::string domain){ SettingTable::getSingleton()->setDomain(domain);}));
@@ -12,8 +10,12 @@ namespace Settings {
     }
 
     void LovenseSettingGroup::setUp(OStim::InterfaceMap* map) {
-        OStim::SettingInterface* settingInterface = static_cast<OStim::SettingInterface*>(map->queryInterface(OStim::SettingInterface::NAME));
+        settingInterface = static_cast<OStim::SettingInterface*>(map->queryInterface(OStim::SettingInterface::NAME));
+        if (!settingInterface) {
+            return;
+        }
         settingInterface->addGroup(this);
+        settingInterface->registerExportImportListener(this);
     }
 
 
@@ -39,5 +41,26 @@ namespace Settings {
         }
 
         return settings[index];
+    }
+
+
+    void LovenseSettingGroup::exportSettings(OStim::SettingExportImportScale scale) {
+        if (!settingInterface) {
+            return;
+        }
+
+        SettingTable* table = SettingTable::getSingleton();
+        settingInterface->exportStringSimple(ADDON, SETTING_DOMAIN, table->getDomain()->c_str());
+        settingInterface->exportStringSimple(ADDON, SETTING_PORT, table->getPort()->c_str());
+    }
+
+    void LovenseSettingGroup::importSettings(OStim::SettingExportImportScale scale) {
+        if (!settingInterface) {
+            return;
+        }
+
+        SettingTable* table = SettingTable::getSingleton();
+        table->setDomain(settingInterface->importStringSimple(ADDON, SETTING_DOMAIN, table->getDomain()->c_str()));
+        table->setPort(settingInterface->importStringSimple(ADDON, SETTING_PORT, table->getPort()->c_str()));
     }
 }

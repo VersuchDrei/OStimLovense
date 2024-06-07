@@ -11,7 +11,7 @@ namespace Toys {
     public:
         void setInterfaceMap(OStim::InterfaceMap* map);
 
-        virtual void reloadToys();
+        virtual void reloadToys() override;
 
     private:
         OStim::SexToyInterface* toyInterface = nullptr;
