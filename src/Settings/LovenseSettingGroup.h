@@ -29,6 +29,7 @@ namespace Settings {
         virtual void exportSettings(OStim::SettingExportImportScale scale) override;
         virtual void importSettings(OStim::SettingExportImportScale scale) override;
 
+        void loadVRConfig(); 
     private:
         std::vector<OStim::Setting*> settings;
         OStim::SettingInterface* settingInterface = nullptr;
