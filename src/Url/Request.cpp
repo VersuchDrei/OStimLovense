@@ -12,7 +12,7 @@ namespace Request {
         return size * nmemb;
     }
 
-    RequestResult send(std::string& toy, Lovense::CommandType &command, std::unordered_map<std::string, std::string> params) {
+    RequestResult send(std::string& toy, Lovense::CommandType &command, std::vector<std::tuple<Lovense::Parameter, std::string>> params) {
         Settings::SettingTable *settings = Settings::SettingTable::getSingleton();
 
         CURL* curl;
@@ -38,11 +38,18 @@ namespace Request {
             /* Now specify the POST data */
             json post = json::object();
             post["command"] = command.command;
-            for (auto &[key, value] : params) {
-                if (StringUtil::isNumber(value)) {
-                    post[key] = std::stoi(value);
-                } else {
-                    post[key] = value;
+            for (auto &[param, value] : params) {
+                switch (param.type) {
+                    case Lovense::ParameterType::INT: {
+                        post[param.parameter] = std::stoi(value);
+                    } break;
+                    case Lovense::ParameterType::JSON: {
+                        json json = json::parse(value, nullptr, false);
+                        post[param.parameter] = json;
+                    } break;
+                    case Lovense::ParameterType::STRING: {
+                        post[param.parameter] = value;
+                    } break;
                 }
             }
             if (!toy.empty()) {

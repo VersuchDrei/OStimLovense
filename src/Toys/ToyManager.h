@@ -15,6 +15,6 @@ namespace Toys {
 
     private:
         OStim::SexToyInterface* toyInterface = nullptr;
-        std::vector<LovenseToy> toys;
+        std::vector<LovenseToy*> toys;
     };
 }

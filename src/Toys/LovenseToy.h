@@ -8,6 +8,7 @@ namespace Toys {
         static inline std::string NO_TOY = "";
 
         inline LovenseToy(std::string id, std::string name) : id{id}, name{name} {}
+        virtual ~LovenseToy();
 
         virtual const char* getID();
         virtual const char* getName();
@@ -20,8 +21,12 @@ namespace Toys {
         virtual void peak(float magnitude, float duration);
         virtual void stop();
 
-    private:
+    protected:
         std::string id;
+
+    private:
         std::string name;
     };
+
+    inline LovenseToy::~LovenseToy(){}
 }

@@ -2,6 +2,7 @@
 
 namespace Lovense {
     struct ActionType {
+    public:
         std::string function;
         std::string pattern;
         uint8_t max;
@@ -22,6 +23,6 @@ namespace Lovense {
         inline ActionType THRUSTING{"Thrusting", "t", 20};
         inline ActionType VIBRATE{"Vibrate", "v", 20};
 
-        inline std::vector<ActionType> DEFAULT_TYPES{VIBRATE, ROTATE, PUMP};
+        inline std::vector<ActionType> DEFAULT_TYPES{VIBRATE, DEPTH, PUMP, ROTATE, THRUSTING};
     }
 }

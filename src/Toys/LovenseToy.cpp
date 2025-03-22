@@ -24,34 +24,32 @@ namespace Toys {
     void LovenseToy::turnOff() {
 
     }
-
+    
 
     void LovenseToy::update(float baseline, float peak, int16_t peakInterval) {
-        std::string baseMagnitude = Lovense::ActionTypes::VIBRATE.parseMagnitude(baseline);
+        std::vector<std::tuple<Lovense::Parameter, std::string>> params;
 
-        std::unordered_map<std::string, std::string> params;
-
-        //if (peakInterval <= 0) {
-            std::string actionString = "";
-            std::string comma = "";
-            for (Lovense::ActionType& action : Lovense::ActionTypes::DEFAULT_TYPES) {
-                std::string magnitude = action.parseMagnitude(baseline);
-                if (magnitude != "0") {
-                    actionString += comma + action.function + ":" + magnitude;
-                    comma = ",";
-                }
-                
+        // if (peakInterval <= 0) {
+        std::string actionString = "";
+        std::string comma = "";
+        for (Lovense::ActionType& action : Lovense::ActionTypes::DEFAULT_TYPES) {
+            std::string magnitude = action.parseMagnitude(baseline);
+            if (magnitude != "0") {
+                actionString += comma + action.function + ":" + magnitude;
+                comma = ",";
             }
-            params["action"] = actionString;
-            params["timeSec"] = "3";
-            params["stopPrevious"] = "0";
-            Request::send(id, Lovense::CommandTypes::FUNCTION, params);
-            return;
+        }
+        params.push_back({Lovense::Parameters::FUNCTION_ACTION, actionString});
+        params.push_back({Lovense::Parameters::FUNCTION_TIME_SEC, "3"});
+        params.push_back({Lovense::Parameters::FUNCTION_STOP_PREVIOUS, "0"});
+        Request::send(id, Lovense::CommandTypes::FUNCTION, params);
+        return;
         //}
 
         // this doesn't work properly, it's laggy and inconsistent
         // so as of now there will be no peaks :c
         /*
+        std::string baseMagnitude = Lovense::ActionTypes::VIBRATE.parseMagnitude(baseline);
         std::string peakMagnitude = Lovense::ActionTypes::VIBRATE.parseMagnitude(peak);
 
         params["rule"] = "V:1;F:v;S:100#";
@@ -71,7 +69,7 @@ namespace Toys {
             strength += ";" + baseMagnitude;
         }
         params["strength"] = strength;
-        
+
         params["timeSec"] = "3";
 
         Request::send(id, Lovense::CommandTypes::PATTERN, params);
@@ -79,7 +77,7 @@ namespace Toys {
     }
 
     void LovenseToy::peak(float magnitude, float duration) {
-        std::unordered_map<std::string, std::string> params;
+        std::vector<std::tuple<Lovense::Parameter, std::string>> params;
 
         std::string actionString = "";
         std::string comma = "";
@@ -87,17 +85,17 @@ namespace Toys {
             actionString += comma + action.function + ":" + action.parseMagnitude(magnitude);
             comma = ",";
         }
-        params["action"] = actionString;
+        params.push_back({Lovense::Parameters::FUNCTION_ACTION, actionString});
 
         if (duration < 1.0f) {
             duration = 1.0f;
         }
-        params["timeSec"] = std::to_string(duration);
-
+        params.push_back({Lovense::Parameters::FUNCTION_TIME_SEC, std::to_string(duration)});
+        
         Request::send(id, Lovense::CommandTypes::FUNCTION, params);
     }
 
     void LovenseToy::stop() {
-        Request::send(id, Lovense::CommandTypes::FUNCTION, {{"action", Lovense::ActionTypes::STOP.function},{"timeSec", "0"}});
+        Request::send(id, Lovense::CommandTypes::FUNCTION, {{Lovense::Parameters::FUNCTION_ACTION, Lovense::ActionTypes::STOP.function},{Lovense::Parameters::FUNCTION_TIME_SEC, "0"}});
     }
 }

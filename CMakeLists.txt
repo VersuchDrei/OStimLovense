@@ -6,7 +6,7 @@ message("Using toolchain file ${CMAKE_TOOLCHAIN_FILE}.")
 ########################################################################################################################
 project(
         OStimLovense
-        VERSION 1.0.0
+        VERSION 1.1.0
         DESCRIPTION ""
         LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
@@ -27,6 +27,7 @@ set(sources
         src/Settings/SettingTable.cpp
         src/Settings/TextSetting.cpp
         src/Toys/LovenseToy.cpp
+        src/Toys/SolacePro.cpp
         src/Toys/ToyManager.cpp
         src/Url/Request.cpp
         src/Util/SerializationUtil.cpp

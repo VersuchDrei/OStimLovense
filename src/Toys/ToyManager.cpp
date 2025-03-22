@@ -1,5 +1,7 @@
 #include "ToyManager.h"
 
+#include "SolacePro.h"
+
 #include "Url/Request.h"
 
 namespace Toys {
@@ -9,6 +11,9 @@ namespace Toys {
     }
 
     void ToyManager::reloadToys() {
+        for (LovenseToy* toy : toys) {
+            delete toy;
+        }
         toys.clear();
 
         Request::RequestResult result = Request::send(LovenseToy::NO_TOY, Lovense::CommandTypes::GET_TOYS, {});
@@ -50,20 +55,28 @@ namespace Toys {
                 continue;
             }
 
+            if (!value.contains("name") || !value["name"].is_string()) {
+                logger::info("value of key '{}' of property 'data.toys' of url request 'GetToys' does not have property 'name' defined", key);
+                continue;
+            }
+            std::string type = value["name"];
+
             std::string name;
             if (value.contains("nickName") && value["nickName"].is_string() && !static_cast<std::string>(value["nickName"]).empty()) {
                 name = value["nickName"];
-            } else if (value.contains("name") && value["name"].is_string()) {
-                name = value["name"];
             } else {
-                name = key;
+                name = type;
             }
 
-            this->toys.push_back({key, name});
+            if (type == "solace pro") {
+                this->toys.push_back(new SolacePro(key, name));
+            } else {
+                this->toys.push_back(new LovenseToy(key, name));
+            }
         }
 
-        for (LovenseToy& toy : this->toys) {
-            toyInterface->addToy(&toy);
+        for (LovenseToy* toy : this->toys) {
+            toyInterface->addToy(toy);
         }
     }
 }
